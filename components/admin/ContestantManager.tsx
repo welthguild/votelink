@@ -32,6 +32,7 @@ export default function ContestantManager({
         .from('contestants')
         .select('*')
         .eq('contest_id', contest.id)
+        .eq('is_active', true)
         .order('position', { ascending: true })
 
       if (error) throw error
@@ -73,7 +74,7 @@ export default function ContestantManager({
     try {
       const { error } = await supabase
         .from('contestants')
-        .delete()
+        .update({ is_active: false })
         .eq('id', id)
 
       if (error) throw error

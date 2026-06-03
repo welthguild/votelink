@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS contests (
   banner_url TEXT,
   end_date TIMESTAMP WITH TIME ZONE,
   is_active BOOLEAN DEFAULT true,
+  telegram_enabled BOOLEAN DEFAULT false,
+  telegram_chat_id TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -17,6 +19,7 @@ CREATE TABLE IF NOT EXISTS contestants (
   photo_url TEXT,
   position INTEGER NOT NULL,
   votes INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -52,11 +55,25 @@ ALTER TABLE contestants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE platforms ENABLE ROW LEVEL SECURITY;
 ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies - public read-only access
+-- Create RLS policies - read and write access for public
+-- Contests
 CREATE POLICY "Public can read contests" ON contests FOR SELECT USING (true);
+CREATE POLICY "Public can insert contests" ON contests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public can update contests" ON contests FOR UPDATE USING (true);
+
+-- Contestants
 CREATE POLICY "Public can read contestants" ON contestants FOR SELECT USING (true);
+CREATE POLICY "Public can insert contestants" ON contestants FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public can update contestants" ON contestants FOR UPDATE USING (true);
+
+-- Platforms
 CREATE POLICY "Public can read platforms" ON platforms FOR SELECT USING (true);
+CREATE POLICY "Public can insert platforms" ON platforms FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public can update platforms" ON platforms FOR UPDATE USING (true);
+
+-- Submissions
 CREATE POLICY "Public can read submissions" ON submissions FOR SELECT USING (true);
+CREATE POLICY "Public can insert submissions" ON submissions FOR INSERT WITH CHECK (true);
 
 -- Create function to increment vote count
 CREATE OR REPLACE FUNCTION increment_vote_count()
