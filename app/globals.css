@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --primary: 259 89% 59%;
+  --secondary: 220 14% 96%;
+  --accent: 0 84% 60%;
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 100%;
+    --primary: 259 89% 59%;
+    --secondary: 220 14% 20%;
+    --accent: 0 84% 60%;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: 'Poppins', sans-serif;
+}
