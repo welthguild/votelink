@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" style={{ fontFamily: 'Poppins, sans-serif' }}>
-      <body className="bg-white text-gray-900">{children}</body>
+    <html lang="en" className={poppins.variable}>
+      <body className="bg-white text-gray-900 font-sans">{children}</body>
     </html>
   )
 }
