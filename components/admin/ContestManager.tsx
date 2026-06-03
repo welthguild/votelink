@@ -5,12 +5,12 @@ import { createClient } from '@/lib/supabase/client'
 
 interface ContestManagerProps {
   onContestCreated: () => void
-  selectedContest: any
+  selectedContest?: any
 }
 
 export default function ContestManager({
   onContestCreated,
-  selectedContest,
+  selectedContest: _selectedContest,
 }: ContestManagerProps) {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
