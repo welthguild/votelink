@@ -40,14 +40,10 @@ export default function VotePage({
   platforms,
 }: VotePageProps) {
   const [contestants, setContestants] = useState(initialContestants)
-  const [loading, setLoading] = useState(false)
-
   const supabase = createClient()
 
   useEffect(() => {
-    // Fetch vote counts
     fetchVoteCounts()
-    // Refresh every 5 seconds
     const interval = setInterval(fetchVoteCounts, 5000)
     return () => clearInterval(interval)
   }, [contest.id])
@@ -59,10 +55,7 @@ export default function VotePage({
         .select('*')
         .eq('contest_id', contest.id)
         .order('position', { ascending: true })
-
-      if (data) {
-        setContestants(data)
-      }
+      if (data) setContestants(data)
     } catch (error) {
       console.error('Error fetching vote counts:', error)
     }
@@ -74,92 +67,48 @@ export default function VotePage({
     <div
       className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100"
       style={{
-        backgroundImage: contest.banner_url
-          ? `url(${contest.banner_url})`
-          : undefined,
+        backgroundImage: contest.banner_url ? `url(${contest.banner_url})` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      {/* Banner Overlay */}
       {contest.banner_url && (
         <div className="absolute inset-0 bg-black/40 pointer-events-none" />
       )}
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
-        {/* Header */}
         <div className="text-center mb-12">
-          <h1
-            className={`text-5xl font-bold mb-4 ${
-              contest.banner_url ? 'text-white drop-shadow-lg' : 'text-gray-900'
-            }`}
-          >
+          <h1 className={`text-5xl font-bold mb-4 ${contest.banner_url ? 'text-white drop-shadow-lg' : 'text-gray-900'}`}>
             {contest.name}
           </h1>
-
           {isContestEnded && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg inline-block">
               <p className="font-semibold">🏁 Contest has ended</p>
             </div>
           )}
         </div>
-
-        {/* Contestants Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {contestants.map((contestant) => (
-            <div
-              key={contestant.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-            >
-              {/* Photo */}
+            <div key={contestant.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
               {contestant.photo_url && (
                 <div className="relative h-64 bg-gray-200 overflow-hidden">
-                  <img
-                    src={contestant.photo_url}
-                    alt={contestant.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                  />
+                  <img src={contestant.photo_url} alt={contestant.name} className="w-full h-full object-cover hover:scale-105 transition-transform" />
                 </div>
               )}
-
-              {/* Content */}
               <div className="p-6">
-                <p className="text-sm font-semibold text-blue-600 mb-2">
-                  #{contestant.position}
-                </p>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {contestant.name}
-                </h3>
-
+                <p className="text-sm font-semibold text-blue-600 mb-2">#{contestant.position}</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{contestant.name}</h3>
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-600">
-                      Votes
-                    </span>
-                    <span className="text-2xl font-bold text-blue-600">
-                      {contestant.votes}
-                    </span>
+                    <span className="text-sm font-medium text-gray-600">Votes</span>
+                    <span className="text-2xl font-bold text-blue-600">{contestant.votes}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-3">
                     <div
                       className="bg-blue-500 h-3 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${
-                          contestants.length > 0
-                            ? (contestant.votes /
-                                Math.max(
-                                  ...contestants.map((c) => c.votes || 1),
-                                  1
-                                )) *
-                              100
-                            : 0
-                        }%`,
-                      }}
+                      style={{ width: `${contestants.length > 0 ? (contestant.votes / Math.max(...contestants.map((c) => c.votes || 1), 1)) * 100 : 0}%` }}
                     />
                   </div>
                 </div>
-
-                {/* Vote Buttons */}
                 <div className="flex flex-col gap-3">
                   {platforms.length > 0 && !isContestEnded ? (
                     platforms.map((platform) => (
@@ -172,20 +121,15 @@ export default function VotePage({
                       </Link>
                     ))
                   ) : isContestEnded ? (
-                    <p className="text-center text-gray-500 text-sm">
-                      Voting ended
-                    </p>
+                    <p className="text-center text-gray-500 text-sm">Voting ended</p>
                   ) : (
-                    <p className="text-center text-gray-500 text-sm">
-                      No voting platforms available
-                    </p>
+                    <p className="text-center text-gray-500 text-sm">No voting platforms available</p>
                   )}
                 </div>
               </div>
             </div>
           ))}
         </div>
-
         {contestants.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-600 text-lg">No contestants yet.</p>
