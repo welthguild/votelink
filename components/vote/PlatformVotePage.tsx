@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 interface PlatformVotePageProps {
   contest: any
@@ -19,7 +18,6 @@ export default function PlatformVotePage({
 }: PlatformVotePageProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleVote = async () => {
     if (!contestant) {
@@ -30,22 +28,26 @@ export default function PlatformVotePage({
     try {
       setLoading(true)
 
-      // Submit vote
-      const { error } = await supabase.from('submissions').insert([
-        {
-          contest_id: contest.id,
-          contestant_id: contestant.id,
+      // Submit vote through API
+      const response = await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contestId: contest.id,
+          contestantId: contestant.id,
           platform: platform,
-        },
-      ])
+        }),
+      })
 
-      if (error) throw error
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to submit vote')
+      }
 
-      // Increment vote count
-      await supabase
-        .from('contestants')
-        .update({ votes: (contestant.votes || 0) + 1 })
-        .eq('id', contestant.id)
+      // If platform has a redirect URL, open it in new tab
+      if (platformConfig?.redirect_url && platformConfig.redirect_url.trim()) {
+        window.open(platformConfig.redirect_url, '_blank')
+      }
 
       // Redirect to thanks page
       router.push(`/vote/${contest.slug}/thanks?contestant=${contestant.id}`)
