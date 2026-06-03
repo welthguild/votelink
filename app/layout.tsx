@@ -1,5 +1,12 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Poppins } from 'next/font/google'
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-poppins',
+})
 
 export const metadata: Metadata = {
   title: 'VoteLink - Modern Voting Platform',
@@ -12,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="bg-background">
-      <body>{children}</body>
+    <html lang="en" style={{ fontFamily: 'Poppins, sans-serif' }}>
+      <body className="bg-white text-gray-900">{children}</body>
     </html>
   )
 }
